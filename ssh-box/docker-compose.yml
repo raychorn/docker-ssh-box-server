@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  ssh_box:
+    image: raychorn/ubuntu_nginx_focal_all_pythons:latest-clean-3.9.6
+    container_name: ssh_box
+    environment:
+      - TZ=America/Denver
+    volumes:
+      - ./workspaces/banner.txt:/workspaces/banner.txt:ro
+      - ./entrypoint.sh:/workspaces/entrypoint.sh:ro
+      - ./workspaces/etc-ssh/authorized_keys:/root/.ssh/authorized_keys:ro
+      - ./workspaces/etc-ssh/sshd_config:/etc/ssh/sshd_config:ro
+    ports:
+      - 2222:2222
+    tty: true
+    stdin_open: true
+    command: ["/workspaces/entrypoint.sh"]
+    logging:
+        options:
+            max-size: 1g
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 128M
+    restart: unless-stopped
